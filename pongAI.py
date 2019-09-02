@@ -1,6 +1,6 @@
 import time
-import matplotlib.pyplot as plt
-import sys
+# import matplotlib.pyplot as plt
+# import sys
 import gym
 import numpy as np
 import tensorflow as tf
@@ -37,14 +37,16 @@ print(tf.__version__)
 
 model = tf.keras.Sequential([
     layers.Conv2D(32, (3, 3), strides=1, activation=tf.keras.activations.relu, input_shape=(40, 80, 2)),
-    layers.MaxPooling2D(2),
+    layers.Conv2D(64, (3, 3), strides=1, activation=tf.keras.activations.relu),
     layers.Conv2D(64, (3, 3), strides=1, activation=tf.keras.activations.relu),
     layers.Flatten(),
-    layers.Dense(64, activation=tf.keras.activations.relu),
+    layers.Dense(128, activation=tf.keras.activations.relu),
     layers.Dense(3, activation=tf.keras.activations.softmax)
 ])
-
-model.load_weights("weights.h5")
+# try:
+    # model.load_weights("weights.h5")
+# except:
+#     print("Unable to load weights")
 model.summary()
 
 model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.0001),
@@ -64,11 +66,11 @@ score = []
 episode_nb = 0
 gamma = 0.99
 epsilon = 0
-epsilon_dec = 0.99
-epsilon_min = 0.02
+epsilon_dec = 0.995
+epsilon_min = 0
 nb_sample = 0
 rewards_sum = 0
-min_batch_size = 50000
+min_batch_size = 20000
 
 
 def discount_rewards(rewards, gamma):
@@ -89,7 +91,7 @@ while True:
     # time.sleep(0.01)
 
     # if episode_nb % 5 == 0:
-    #     time.sleep(0.001)
+    # time.sleep(0.001)
     env.render()
 
     cur_inp = preprocess(observation)
